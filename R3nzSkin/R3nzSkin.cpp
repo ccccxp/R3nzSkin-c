@@ -81,13 +81,32 @@ __declspec(safebuffers) static void WINAPI DllAttach([[maybe_unused]] LPVOID lp)
 
 	cheatManager.config->init();
 	cheatManager.config->load();
-	cheatManager.gui->is_open = cheatManager.config->isOpen;
 	cheatManager.logger->addLog("CFG loaded!\n");
 	
 	cheatManager.hooks->install();
-		
-	while (cheatManager.cheatState)
+	
+	// Auto-hide GUI when game starts running (stealth mode)
+	// Set after hooks->install() to ensure GUI is initialized
+	cheatManager.gui->is_open = false;
+	cheatManager.logger->addLog("GUI hidden for stealth mode.\n");
+	
+	// Monitor game state and auto-show GUI when game ends
+	auto lastGameState = GGameState_s::Running;
+	while (cheatManager.cheatState) {
 		std::this_thread::sleep_for(250ms);
+		
+		// Check if game state changed to finished/exiting
+		if (cheatManager.memory->client) {
+			const auto currentState = cheatManager.memory->client->game_state;
+			if (lastGameState == GGameState_s::Running && 
+				(currentState == GGameState_s::Finished || currentState == GGameState_s::Exiting)) {
+				// Game ended, show GUI automatically
+				cheatManager.gui->is_open = true;
+				cheatManager.logger->addLog("Game ended, GUI shown.\n");
+			}
+			lastGameState = currentState;
+		}
+	}
 
 	::ExitProcess(0u);
 }

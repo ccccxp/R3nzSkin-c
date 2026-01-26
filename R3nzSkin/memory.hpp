@@ -47,11 +47,32 @@ public:
 private:
 	void update(bool gameClient = true) noexcept;
 
+	bool gameClientErrorShown{ false };  // Only show error once
+	bool sigsErrorShown{ false };
+
 	std::vector<offset_signature> gameClientSig
 	{
 		{
 			{
-				"48 8B 05 ? ? ? ? 48 8B F2 83 78"
+				// GameClient patterns - historical versions (newest first)
+				"48 8B 05 ? ? ? ? 48 8B F2 83 78",          // Current CN server
+				"48 8B 05 ? ? ? ? 4C 8B FA 83 78 0C 02",    // Older version (full)
+				"48 8B 05 ? ? ? ? 4C 8B FA 83 78",          // Older version (short)
+				// New patterns from memory scan
+				"48 8B 05 ? ? ? ? 48 8B 40 10 48",          // New variant 1
+				"48 8B 05 ? ? ? ? 48 8B D9 48 83",          // New variant 2
+				// Ultra generic patterns (more wildcards)
+				"48 8B 05 ? ? ? ? 48 8B ? ? 83 78",         // Generic MOV RAX + any reg
+				"48 8B 05 ? ? ? ? 4C 8B ? ? 83 78",         // Generic MOV RAX + R8-R15
+				"48 8B 0D ? ? ? ? 48 8B ? ? 83 78",         // MOV RCX variant
+				"48 8B 0D ? ? ? ? 4C 8B ? ? 83 78",         // MOV RCX + R8-R15
+				"48 8B 15 ? ? ? ? 48 8B ? ? 83 78",         // MOV RDX variant
+				"48 8B 1D ? ? ? ? 48 8B ? ? 83 78",         // MOV RBX variant
+				// State check patterns (game_state == 2)
+				"83 78 ? 02 75",                            // cmp [rax+?], 2; jne
+				"83 79 ? 02 75",                            // cmp [rcx+?], 2; jne
+				"83 78 ? 02 74",                            // cmp [rax+?], 2; je
+				"83 ? 10 02"                                // cmp [?+10h], 2 (offset 0x10)
 			}, true, false, true, 0, &offsets::global::GameClient
 		}
 	};
@@ -95,7 +116,7 @@ private:
 		},
 		{
 			{
-				"88 87 ? ? 00 00 48 89 45 87 0F B6 45 88 88 87 ? 13"
+				"88 86 ? ? 00 00 48 89 45 ? 0F B6 45 A8 88 86 ? 13"
 			}, false, true, false, 0, &offsets::AIBaseCommon::SkinId
 		},
 		{
@@ -110,7 +131,7 @@ private:
 		},
 		{
 			{
-				"4C 8B DC 53 56 57 48 83 EC ? 49"
+				"88 54 24 10 55 53 56 57 41 54 41 55 41 56 41"
 			}, true, false, false, 0, &offsets::functions::CharacterDataStack__Update
 		},
 		{

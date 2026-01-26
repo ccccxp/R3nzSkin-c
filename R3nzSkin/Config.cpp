@@ -99,10 +99,10 @@ void Config::save() noexcept
 		saveToRegistry((L"PlayerSkin_" + std::wstring(championName.begin(), championName.end())).c_str(), static_cast<DWORD>(this->current_combo_skin_index));
 	}
 
-	// Save hotkeys
-	saveToRegistry(L"MenuKey", static_cast<DWORD>(this->menuKey.getKey()));
-	saveToRegistry(L"NextSkinKey", static_cast<DWORD>(this->nextSkinKey.getKey()));
-	saveToRegistry(L"PrevSkinKey", static_cast<DWORD>(this->previousSkinKey.getKey()));
+	// Save hotkeys as KeyCode enum index (not VK code!)
+	saveToRegistry(L"MenuKeyCode", static_cast<DWORD>(this->menuKey.getKeyCode()));
+	saveToRegistry(L"NextSkinKeyCode", static_cast<DWORD>(this->nextSkinKey.getKeyCode()));
+	saveToRegistry(L"PrevSkinKeyCode", static_cast<DWORD>(this->previousSkinKey.getKeyCode()));
 
 	// Save options
 	saveToRegistry(L"HeroName", static_cast<DWORD>(this->heroName ? 1 : 0));
@@ -157,10 +157,16 @@ void Config::load() noexcept
 		this->current_combo_skin_index = static_cast<std::int32_t>(loadFromRegistry((L"PlayerSkin_" + std::wstring(championName.begin(), championName.end())).c_str(), 0));
 	}
 
-	// Load hotkeys
-	this->menuKey = KeyBind(static_cast<KeyBind::KeyCode>(loadFromRegistry(L"MenuKey", KeyBind::INSERT)));
-	this->nextSkinKey = KeyBind(static_cast<KeyBind::KeyCode>(loadFromRegistry(L"NextSkinKey", KeyBind::PAGE_UP)));
-	this->previousSkinKey = KeyBind(static_cast<KeyBind::KeyCode>(loadFromRegistry(L"PrevSkinKey", KeyBind::PAGE_DOWN)));
+	// Load hotkeys as KeyCode enum index (not VK code!)
+	// First try new format (KeyCode), then fallback to old format for migration
+	auto menuKeyCode = loadFromRegistry(L"MenuKeyCode", static_cast<DWORD>(KeyBind::MAX));
+	auto nextKeyCode = loadFromRegistry(L"NextSkinKeyCode", static_cast<DWORD>(KeyBind::MAX));
+	auto prevKeyCode = loadFromRegistry(L"PrevSkinKeyCode", static_cast<DWORD>(KeyBind::MAX));
+	
+	// Use new format if valid, otherwise use defaults
+	this->menuKey = KeyBind(static_cast<KeyBind::KeyCode>(menuKeyCode < KeyBind::MAX ? menuKeyCode : KeyBind::INSERT));
+	this->nextSkinKey = KeyBind(static_cast<KeyBind::KeyCode>(nextKeyCode < KeyBind::MAX ? nextKeyCode : KeyBind::PAGE_UP));
+	this->previousSkinKey = KeyBind(static_cast<KeyBind::KeyCode>(prevKeyCode < KeyBind::MAX ? prevKeyCode : KeyBind::PAGE_DOWN));
 
 	// Load options
 	this->heroName = loadFromRegistry(L"HeroName", 1) != 0;

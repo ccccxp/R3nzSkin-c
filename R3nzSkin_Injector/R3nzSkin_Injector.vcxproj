@@ -23,7 +23,7 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{40f6875e-c1e5-4c10-a129-6e84ce034801}</ProjectGuid>
     <RootNamespace>R3nzSkinInjector</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
     <ProjectName>R3nzSkin_Injector</ProjectName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
   </PropertyGroup>
@@ -31,7 +31,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RiotGamesServers|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
@@ -40,20 +40,20 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RiotGamesServers|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='ChinaServer|Win32'">
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CLRSupport>true</CLRSupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ChinaServer|x64'" Label="Configuration">
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CLRSupport>true</CLRSupport>
@@ -92,6 +92,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RiotGamesServers|Win32'">
     <ClCompile>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)Include\\$(WindowsSdkVersion)ucrt;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)shared;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)um;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)winrt;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)cppwinrt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WarningLevel>Level3</WarningLevel>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
@@ -122,6 +123,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RiotGamesServers|x64'">
     <ClCompile>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)Include\\$(WindowsSdkVersion)ucrt;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)shared;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)um;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)winrt;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)cppwinrt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WarningLevel>Level2</WarningLevel>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
@@ -157,6 +159,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ChinaServer|Win32'">
     <ClCompile>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)Include\\$(WindowsSdkVersion)ucrt;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)shared;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)um;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)winrt;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)cppwinrt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -177,6 +180,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ChinaServer|x64'">
     <ClCompile>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)Include\\$(WindowsSdkVersion)ucrt;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)shared;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)um;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)winrt;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)cppwinrt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>

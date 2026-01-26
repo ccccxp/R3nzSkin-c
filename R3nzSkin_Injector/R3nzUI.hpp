@@ -74,6 +74,11 @@ namespace R3nzSkinInjector {
 					if (cheatState) {
 						this->dllStatusLabel->Text = L"Injected";
 						this->dllStatusLabel->ForeColor = Color::FromArgb(255, 252, 220, 107);
+						
+						// Auto-hide window when game is running and injection is successful
+						if (this->Visible) {
+							this->Invoke(gcnew Action(this, &R3nzUI::hideWindow));
+						}
 					}
 					else {
 						this->dllStatusLabel->Text = L"Not Injected";
@@ -85,9 +90,29 @@ namespace R3nzSkinInjector {
 					this->gameStatusLabel->ForeColor = Color::FromArgb(255, 245, 8, 83);
 					this->dllStatusLabel->Text = L"Not Injected";
 					this->dllStatusLabel->ForeColor = Color::FromArgb(255, 245, 8, 83);
+					
+					// Auto-show window when game ends
+					if (!this->Visible && cheatState) {
+						cheatState = false;  // Reset state
+						this->Invoke(gcnew Action(this, &R3nzUI::showWindow));
+					}
 				}
 				Thread::Sleep(1000);
 			}
+		}
+		
+		void hideWindow()
+		{
+			this->Hide();
+			this->notifyIcon->Visible = true;
+			this->notifyIcon->ShowBalloonTip(2000, L"R3nzSkin", L"Injector minimized to tray. Game running.", ToolTipIcon::Info);
+		}
+		
+		void showWindow()
+		{
+			this->Show();
+			this->WindowState = FormWindowState::Normal;
+			this->notifyIcon->Visible = false;
 		}
 
 		void saveSettings()

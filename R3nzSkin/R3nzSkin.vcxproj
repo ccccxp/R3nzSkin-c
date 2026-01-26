@@ -23,28 +23,28 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{17b6e7a6-aa76-4c09-b2aa-e2055ef748d2}</ProjectGuid>
     <RootNamespace>R3nzSkin</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
     <ProjectName>R3nzSkin</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ChinaServer|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ChinaServer|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RiotGamesServers|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <PreferredToolArchitecture>x86</PreferredToolArchitecture>
@@ -52,7 +52,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RiotGamesServers|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
@@ -102,6 +102,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ChinaServer|Win32'">
     <ClCompile>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)Include\\$(WindowsSdkVersion)ucrt;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)shared;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)um;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)winrt;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)cppwinrt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -126,6 +127,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ChinaServer|x64'">
     <ClCompile>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)Include\\$(WindowsSdkVersion)ucrt;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)shared;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)um;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)winrt;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)cppwinrt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -150,6 +152,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RiotGamesServers|Win32'">
     <ClCompile>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)Include\\$(WindowsSdkVersion)ucrt;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)shared;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)um;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)winrt;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)cppwinrt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -183,6 +186,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RiotGamesServers|x64'">
     <ClCompile>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)Include\\$(WindowsSdkVersion)ucrt;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)shared;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)um;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)winrt;$(WindowsSdkDir)Include\\$(WindowsSdkVersion)cppwinrt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>

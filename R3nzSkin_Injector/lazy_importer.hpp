@@ -27,7 +27,12 @@
 #ifndef LAZY_IMPORTER_HPP
 #define LAZY_IMPORTER_HPP
 
-
+// Disable warnings for third-party library
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4267) // size_t to DWORD conversion
+#pragma warning(disable: 4793) // function compiled as native
+#endif
 #define LI_FN(name) ::li::detail::lazy_function<LAZY_IMPORTER_KHASH(#name), decltype(&name)>()
 
 #define LI_FN_DEF(name) ::li::detail::lazy_function<LAZY_IMPORTER_KHASH(#name), name>()
@@ -711,5 +716,9 @@ namespace li { namespace detail {
     };
 
 }} // namespace li::detail
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 
 #endif // include guard

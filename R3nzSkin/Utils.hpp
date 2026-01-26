@@ -62,7 +62,8 @@ public:
     friend bool operator==(const KeyBind& a, const KeyBind& b) noexcept { return a.keyCode == b.keyCode; }
 
     const char* toString() const noexcept;
-    int getKey() const noexcept;
+    int getKey() const noexcept;           // Returns VK code for key handling
+    KeyCode getKeyCode() const noexcept { return keyCode; }  // Returns enum index for save/load
     bool isPressed() const noexcept;
     bool isDown() const noexcept;
     bool isSet() const noexcept { return keyCode != KeyCode::NONE; }
