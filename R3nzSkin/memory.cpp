@@ -118,12 +118,14 @@ void Memory::Search(bool gameClient)
 				if (*sig.offset != 0)
 					continue;
 
-				for (auto& pattern : sig.pattern) {
+				// Get decrypted patterns
+				auto patterns = sig.get_patterns();
+				for (auto& pattern : patterns) {
 					auto address{ find_signature(nullptr, pattern.c_str()) };
 
 					if (!address) {
-						::MessageBoxA(nullptr, ("Failed to find pattern: " + pattern).c_str(), "R3nzSkin", MB_OK | MB_ICONWARNING);
-						// cheatManager.logger->addLog("Not found: %s\n", pattern.c_str());
+						// Don't show error message - just continue to next pattern
+						// This helps avoid detection through error messages
 						continue;
 					}
 
@@ -140,7 +142,6 @@ void Memory::Search(bool gameClient)
 					address += sig.additional;
 
 					*sig.offset = reinterpret_cast<std::uint32_t>(address);
-					// cheatManager.logger->addLog("Found: %s\n\tAddress: 0x%X\n", pattern.c_str(), *sig.offset);
 					break;
 				}
 
@@ -157,6 +158,7 @@ void Memory::Search(bool gameClient)
 		}
 		this->update(gameClient);
 	} catch (const std::exception& e) {
-		::MessageBoxA(nullptr, e.what(), "R3nzSkin", MB_OK | MB_ICONWARNING);
+		// Don't show error message - helps avoid detection
+		// Just silently fail
 	}
 }

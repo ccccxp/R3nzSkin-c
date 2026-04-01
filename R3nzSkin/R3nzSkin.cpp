@@ -67,6 +67,12 @@ __declspec(safebuffers) static void WINAPI DllAttach([[maybe_unused]] LPVOID lp)
 	while (true) {
 		std::this_thread::sleep_for(1s);
 		
+		// Heartbeat check
+		if (!AntiDetection::HeartbeatCheck()) {
+			// Environment changed, exit silently
+			::ExitProcess(0u);
+		}
+		
 		if (!cheatManager.memory->client)
 			cheatManager.memory->Search(true);
 		else if (cheatManager.memory->client->game_state == GGameState_s::Running)
@@ -86,8 +92,15 @@ __declspec(safebuffers) static void WINAPI DllAttach([[maybe_unused]] LPVOID lp)
 	
 	cheatManager.hooks->install();
 		
-	while (cheatManager.cheatState)
+	while (cheatManager.cheatState) {
 		std::this_thread::sleep_for(250ms);
+		
+		// Periodic heartbeat check
+		if (!AntiDetection::HeartbeatCheck()) {
+			// Environment changed, exit silently
+			cheatManager.cheatState = false;
+		}
+	}
 
 	::ExitProcess(0u);
 }
@@ -106,6 +119,14 @@ __declspec(safebuffers) BOOL APIENTRY DllMain(const HMODULE hModule, const DWORD
 		HideThread(hModule);
 		std::setlocale(LC_ALL, ".utf8");
 
+		// Create a named event to signal successful injection
+		// This allows the injector to detect if the DLL is loaded
+		// The event name is based on the current process ID
+		wchar_t eventName[64];
+		swprintf(eventName, 64, L"Global\\MM_%08X", ::GetCurrentProcessId());
+		HANDLE hEvent = ::CreateEventW(nullptr, TRUE, TRUE, eventName);
+		// Keep the event handle open - it will be closed when the process exits
+		
 		::_beginthreadex(nullptr, 0u, reinterpret_cast<_beginthreadex_proc_type>(DllAttach), nullptr, 0u, nullptr);
 		::CloseHandle(hModule);
 		return TRUE;
