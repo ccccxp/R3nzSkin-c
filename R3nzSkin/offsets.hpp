@@ -15,11 +15,7 @@ namespace offsets {
 		};
 		enum {
 			Team = 0x259,
-<<<<<<< HEAD
-			Name = 0x60
-=======
 			Name = 0x68
->>>>>>> pureupstream/main
 		};
 	};
 
