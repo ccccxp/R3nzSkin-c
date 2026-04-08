@@ -1,6 +1,6 @@
 #pragma warning(disable: 28182 6011)
 
-#include <Windows.h>
+#include <windows.h>
 #include <chrono>
 #include <cstdint>
 #include <string>
@@ -41,7 +41,7 @@
 	const auto ntHeaders{ reinterpret_cast<PIMAGE_NT_HEADERS>(reinterpret_cast<std::uint8_t*>(module) + dosHeader->e_lfanew) };
 	const auto textSection{ IMAGE_FIRST_SECTION(ntHeaders) };
 
-	const auto sizeOfImage{ textSection->SizeOfRawData };
+	const auto sizeOfImage{ static_cast<std::size_t>(textSection->SizeOfRawData) };
 	const auto patternBytes{ pattern_to_byte(szSignature) };
 	const auto scanBytes{ reinterpret_cast<std::uint8_t*>(module) + textSection->VirtualAddress };
 
@@ -51,16 +51,16 @@
 	MEMORY_BASIC_INFORMATION mbi{ nullptr };
 	const std::uint8_t* next_check_address{ nullptr };
 
-	for (auto i{ 0ul }; i < sizeOfImage - s; ++i) {
+	for (std::size_t i{ 0 }; i < sizeOfImage - s; ++i) {
 		bool found{ true };
-		for (auto j{ 0ul }; j < s; ++j) {
+		for (std::size_t j{ 0 }; j < s; ++j) {
 			const auto current_address{ scanBytes + i + j };
 			if (current_address >= next_check_address) {
 				if (!::VirtualQuery(current_address, &mbi, sizeof(mbi)))
 					break;
 
 				if (mbi.Protect == PAGE_NOACCESS) {
-					i += reinterpret_cast<std::uintptr_t>(mbi.BaseAddress) + mbi.RegionSize - (reinterpret_cast<std::uintptr_t>(scanBytes) + i);
+					i += static_cast<std::size_t>(reinterpret_cast<std::uintptr_t>(mbi.BaseAddress) + mbi.RegionSize - (reinterpret_cast<std::uintptr_t>(scanBytes) + i));
 					i--;
 					found = false;
 					break;
@@ -112,20 +112,20 @@ void Memory::Search(bool gameClient)
 			*sig.offset = 0;
 
 		while (true) {
-			bool missing_offset{ false };
+			std::vector<std::string> failedPatterns;  // Collect all failed patterns
+			bool allFound{ true };
+
 			for (auto& sig : signatureToSearch) {
 
 				if (*sig.offset != 0)
 					continue;
 
-				// Get decrypted patterns
-				auto patterns = sig.get_patterns();
-				for (auto& pattern : patterns) {
+				bool patternFound{ false };
+				for (auto& pattern : sig.pattern) {
 					auto address{ find_signature(nullptr, pattern.c_str()) };
 
 					if (!address) {
-						// Don't show error message - just continue to next pattern
-						// This helps avoid detection through error messages
+						// Pattern not found, try next one silently
 						continue;
 					}
 
@@ -141,24 +141,55 @@ void Memory::Search(bool gameClient)
 
 					address += sig.additional;
 
-					*sig.offset = reinterpret_cast<std::uint32_t>(address);
+					*sig.offset = static_cast<std::uint32_t>(reinterpret_cast<std::uintptr_t>(address));
+					patternFound = true;
 					break;
 				}
 
-				if (!*sig.offset) {
-					missing_offset = true;
-					break;
+				if (!patternFound) {
+					// All patterns failed for this signature - collect all tried patterns
+					allFound = false;
+					for (const auto& pattern : sig.pattern) {
+						failedPatterns.push_back(pattern);
+					}
 				}
 			}
 
-			if (!missing_offset)
+			if (allFound)
 				break;
+
+			// Show error only ONCE
+			bool& errorShown = gameClient ? this->gameClientErrorShown : this->sigsErrorShown;
+			if (!errorShown) {
+				errorShown = true;
+				std::string errorMsg;
+				if (gameClient) {
+					errorMsg = "GameClient pattern not found!\n\n"
+						"Tried patterns:\n";
+					for (const auto& p : failedPatterns) {
+						errorMsg += "  - " + p + "\n";
+					}
+					errorMsg += "\nPossible causes:\n"
+						"1. Game version mismatch - please update R3nzSkin\n"
+						"2. Game client not fully loaded - wait and retry\n"
+						"3. Chinese server kernel update required\n\n"
+						"Program will keep retrying silently...";
+					::MessageBoxA(nullptr, errorMsg.c_str(), "R3nzSkin - Kernel Mismatch", MB_OK | MB_ICONERROR);
+				} else {
+					errorMsg = "Offset patterns not found!\n\nFailed patterns:\n";
+					for (const auto& p : failedPatterns) {
+						errorMsg += "  - " + p + "\n";
+					}
+					errorMsg += "\nPlease update R3nzSkin to match game version.\n"
+						"Program will keep retrying silently...";
+					::MessageBoxA(nullptr, errorMsg.c_str(), "R3nzSkin - Pattern Error", MB_OK | MB_ICONWARNING);
+				}
+			}
 
 			std::this_thread::sleep_for(2s);
 		}
 		this->update(gameClient);
 	} catch (const std::exception& e) {
-		// Don't show error message - helps avoid detection
-		// Just silently fail
+		::MessageBoxA(nullptr, e.what(), "R3nzSkin", MB_OK | MB_ICONWARNING);
 	}
 }
