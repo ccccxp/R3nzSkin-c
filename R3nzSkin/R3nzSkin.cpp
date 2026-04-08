@@ -67,6 +67,12 @@ __declspec(safebuffers) static void WINAPI DllAttach([[maybe_unused]] LPVOID lp)
 	while (true) {
 		std::this_thread::sleep_for(1s);
 		
+		// Heartbeat check
+		if (!AntiDetection::HeartbeatCheck()) {
+			// Environment changed, exit silently
+			::ExitProcess(0u);
+		}
+		
 		if (!cheatManager.memory->client)
 			cheatManager.memory->Search(true);
 		else if (cheatManager.memory->client->game_state == GGameState_s::Running)
@@ -81,30 +87,18 @@ __declspec(safebuffers) static void WINAPI DllAttach([[maybe_unused]] LPVOID lp)
 
 	cheatManager.config->init();
 	cheatManager.config->load();
+	cheatManager.gui->is_open = cheatManager.config->isOpen;
 	cheatManager.logger->addLog("CFG loaded!\n");
 	
 	cheatManager.hooks->install();
-	
-	// Auto-hide GUI when game starts running (stealth mode)
-	// Set after hooks->install() to ensure GUI is initialized
-	cheatManager.gui->is_open = false;
-	cheatManager.logger->addLog("GUI hidden for stealth mode.\n");
-	
-	// Monitor game state and auto-show GUI when game ends
-	auto lastGameState = GGameState_s::Running;
+		
 	while (cheatManager.cheatState) {
 		std::this_thread::sleep_for(250ms);
 		
-		// Check if game state changed to finished/exiting
-		if (cheatManager.memory->client) {
-			const auto currentState = cheatManager.memory->client->game_state;
-			if (lastGameState == GGameState_s::Running && 
-				(currentState == GGameState_s::Finished || currentState == GGameState_s::Exiting)) {
-				// Game ended, show GUI automatically
-				cheatManager.gui->is_open = true;
-				cheatManager.logger->addLog("Game ended, GUI shown.\n");
-			}
-			lastGameState = currentState;
+		// Periodic heartbeat check
+		if (!AntiDetection::HeartbeatCheck()) {
+			// Environment changed, exit silently
+			cheatManager.cheatState = false;
 		}
 	}
 
@@ -125,6 +119,14 @@ __declspec(safebuffers) BOOL APIENTRY DllMain(const HMODULE hModule, const DWORD
 		HideThread(hModule);
 		std::setlocale(LC_ALL, ".utf8");
 
+		// Create a named event to signal successful injection
+		// This allows the injector to detect if the DLL is loaded
+		// The event name is based on the current process ID
+		wchar_t eventName[64];
+		swprintf(eventName, 64, L"Global\\MM_%08X", ::GetCurrentProcessId());
+		HANDLE hEvent = ::CreateEventW(nullptr, TRUE, TRUE, eventName);
+		// Keep the event handle open - it will be closed when the process exits
+		
 		::_beginthreadex(nullptr, 0u, reinterpret_cast<_beginthreadex_proc_type>(DllAttach), nullptr, 0u, nullptr);
 		::CloseHandle(hModule);
 		return TRUE;
